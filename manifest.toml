@@ -1,0 +1,13 @@
+# Change id to your own reverse domain name before you publish: it is how the
+# OS tells apps apart, and an update must keep the same id.
+id = "com.example.hello"
+name = "Hello"
+version = "1.0.0"     # a release tag must match: v1.0.0
+api = 1
+runtime = "native"
+entry = "app.elf"
+# icon = "icon.png"   # a 112 x 112 px PNG; also add ICON icon.png to t5_app() in CMakeLists.txt
+orientation = "any"
+description = "A starting point for a Tab5 OS app"
+
+[permissions]

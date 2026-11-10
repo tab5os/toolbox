@@ -1,0 +1,6 @@
+build/
+.t5sdk/
+*.t5app
+*.elf
+*.map
+*.pem
