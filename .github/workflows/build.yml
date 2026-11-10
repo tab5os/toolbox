@@ -12,6 +12,13 @@ on:
   workflow_dispatch:
 
 jobs:
+  test:
+    # The engine's host tests (tests/run.sh), with AddressSanitizer and UBSan.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: CC=gcc tests/run.sh
+
   build:
     runs-on: ubuntu-latest
     # ESP-IDF's image has the RISC-V toolchain, CMake, Ninja and Python. The

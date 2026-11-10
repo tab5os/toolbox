@@ -24,8 +24,8 @@ ROBOTO = ("https://raw.githubusercontent.com/googlefonts/roboto/"
           "56a45233d29f11b4dfb86d248e921939d115778f87325e7ae8cc108383d6664d")
 # Omega, minus, approximately, less-or-equal, greater-or-equal.
 RANGES = "0x3A9,0x2212,0x2248,0x2264,0x2265"
-# px sizes of the OS's Roboto Regular roles: body2, body1/subtitle1, headline5, headline4.
-SIZES = (28, 32, 48, 68)
+# px sizes of the OS's Roboto Regular roles: caption, body2, body1/subtitle1, headline5, headline4.
+SIZES = (24, 28, 32, 48, 68)
 
 
 def fetch():

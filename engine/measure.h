@@ -1,11 +1,14 @@
 /* Maths for the hardware tools: tilt from the accelerometer, sound level
  * from microphone samples, and the screen's physical scale. Plain C, no UI.
  *
- * Accelerometer input is the OS's "up" vector in panel axes, milli-g: x
- * towards the panel's right edge, y towards its bottom edge, z out of the
- * glass, with the panel in its native portrait orientation (the IMU's chip
- * axes on the Tab5, as the OS's auto-rotate uses them). Held upright in
- * portrait it reads about (0, -1000, 0). */
+ * Accelerometer input is the "up" vector in panel axes, milli-g: x towards
+ * the panel's right edge, y towards its bottom edge, with the panel in its
+ * native portrait orientation (the IMU's chip axes on the Tab5, as the OS's
+ * auto-rotate uses them). Held upright in portrait it reads about
+ * (0, -1000, 0). z completes a right-handed set, so it points into the
+ * glass: lying face up on a table the Tab5 reads about (0, 0, -1000)
+ * (measured: x -16, y 195, z -979 on a slight tilt). Only |z| is used here,
+ * so face up and face down read the same. */
 #pragma once
 #include <stdbool.h>
 #include <stddef.h>
@@ -28,12 +31,12 @@ double meas_default_px_per_mm(void);
 
 /* ---- tilt ------------------------------------------------------------------- */
 typedef struct {
-    float right, up, out;     /* the up vector in screen axes, milli-g */
+    float right, up, out;     /* the up vector in screen axes, milli-g; out is the panel's z */
 } meas_vec_t;
 
 /* Panel axes to the axes of the screen as shown at rotation (0, 90, 180 or
  * 270 degrees: the OS's t5_rotation_t times 90). right is towards the
- * screen's right edge as drawn, up towards its top edge, out of the glass. */
+ * screen's right edge as drawn, up towards its top edge; out is z as given. */
 meas_vec_t meas_to_screen(int rotation_deg, float px, float py, float pz);
 
 typedef struct {

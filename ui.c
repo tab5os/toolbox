@@ -4,7 +4,7 @@
 #include <string.h>
 #include "app.h"
 
-extern lv_font_t tb_sym_28, tb_sym_32, tb_sym_48, tb_sym_68;
+extern lv_font_t tb_sym_24, tb_sym_28, tb_sym_32, tb_sym_48, tb_sym_68;
 
 static uint64_t s_entropy = 0x6A09E667F3BCC909ull;
 
@@ -20,7 +20,8 @@ const lv_font_t *ui_font(int px)
 {
     lv_font_t *f;
     md_type_role_t role;
-    if (px <= 28) f = &tb_sym_28, role = MD_TYPE_BODY2;
+    if (px <= 24) f = &tb_sym_24, role = MD_TYPE_CAPTION;
+    else if (px <= 28) f = &tb_sym_28, role = MD_TYPE_BODY2;
     else if (px <= 32) f = &tb_sym_32, role = MD_TYPE_BODY1;
     else if (px <= 48) f = &tb_sym_48, role = MD_TYPE_HEADLINE5;
     else f = &tb_sym_68, role = MD_TYPE_HEADLINE4;
@@ -100,10 +101,14 @@ lv_obj_t *ui_text_button(lv_obj_t *parent, const char *text, bool filled, lv_obj
     const md_scheme_t *sc = md_scheme();
     lv_obj_t *b = lv_obj_create(parent);
     lv_obj_remove_style_all(b);
-    lv_obj_set_height(b, T5_DP(48));
+    lv_obj_set_size(b, LV_SIZE_CONTENT, T5_DP(48));
+    lv_obj_set_style_min_width(b, T5_DP(64), 0);
     lv_obj_set_style_radius(b, T5_DP(8), 0);
     lv_obj_set_style_pad_hor(b, T5_DP(16), 0);
     lv_obj_set_scrollable(b, false);
+    lv_obj_set_clickable(b, true);
+    lv_obj_set_flex_flow(b, LV_FLEX_FLOW_ROW);
+    lv_obj_set_flex_align(b, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
     if (filled) {
         lv_obj_set_style_bg_opa(b, LV_OPA_COVER, 0);
         lv_obj_set_style_bg_color(b, md_color(sc->c.primary), 0);
@@ -118,7 +123,6 @@ lv_obj_t *ui_text_button(lv_obj_t *parent, const char *text, bool filled, lv_obj
     }
     lv_obj_t *l = md_label_create(b, text, MD_TYPE_BUTTON);
     lv_obj_set_style_text_color(l, md_color(filled ? sc->c.on_primary : sc->c.primary), 0);
-    lv_obj_center(l);
     if (label) *label = l;
     return b;
 }
@@ -458,8 +462,7 @@ static int field_add(form_t *f, const char *label, const char *unit, field_kind_
         lv_obj_set_clickable(fl->row, true);
         lv_obj_add_event_cb(fl->row, field_clicked, LV_EVENT_CLICKED, f);
     }
-    fl->label = md_label_create(fl->row, label, MD_TYPE_CAPTION);
-    lv_obj_set_style_text_opa(fl->label, sc->on_surface.medium, 0);
+    fl->label = ui_label(fl->row, label, 24, sc->on_surface.medium);
     lv_obj_t *line = ui_box(fl->row, LV_FLEX_FLOW_ROW);
     lv_obj_set_width(line, LV_PCT(100));
     lv_obj_set_flex_align(line, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_END, LV_FLEX_ALIGN_END);

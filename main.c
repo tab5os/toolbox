@@ -521,9 +521,11 @@ static void on_create(t5_app_t *app)
     ui_entropy();
     home_create();
     /* A tool's id as the launch argument opens it (`app run <id> conv.length`,
-     * for tests); otherwise come back to the tool that was open. */
+     * for tests; "home" for the home screen); otherwise come back to the
+     * tool that was open. */
     const char *arg = t5_app_launch_arg(app);
     const tool_def_t *d = tool_find(arg && *arg ? arg : g_set.open_tool);
+    if (arg && strcmp(arg, "home") == 0) d = NULL;
     if (d) tool_open(d);
 }
 

@@ -90,7 +90,7 @@ void recent_add(const char *tool, const char *text, int from, int to, const char
 
 /* ---- look ------------------------------------------------------------------- */
 /* Fonts that add Omega, minus, approximately, <= and >= to the OS's Roboto:
- * 28 (body2), 32 (body1), 48 (headline5) or 68 (headline4) px. */
+ * 24 (caption), 28 (body2), 32 (body1), 48 (headline5) or 68 (headline4) px. */
 const lv_font_t *ui_font(int px);
 #define OHM "\xCE\xA9"
 #define MINUS "\xE2\x88\x92"

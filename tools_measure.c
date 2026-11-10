@@ -298,8 +298,10 @@ static void level_draw(lv_event_t *e)
         draw_circle(layer, cx, cy, T5_DP(28), 3, ink, 0xA0, false);
         return;
     }
-    /* Upright: a horizon and a plumb line, turned with the device. */
+    /* Upright: a horizon and a plumb line, turned with the device. Lying
+     * flat there's no edge angle, so the protractor shows only its dial. */
     float edge = t.edge;
+    bool no_edge = l->protractor && t.flat && !l->held;
     float ang = l->protractor ? l->shown : wrap180(edge - g_set.level_zero_edge);
     float rad = edge * 3.14159265f / 180.0f;
     /* "Up" in the world, drawn in screen pixels (y grows down). */
@@ -311,6 +313,7 @@ static void level_draw(lv_event_t *e)
         draw_line(layer, cx + (int32_t)(sinf(r2) * R), cy - (int32_t)(cosf(r2) * R),
                   cx + (int32_t)(sinf(r2) * (R - len)), cy - (int32_t)(cosf(r2) * (R - len)), 2, ink, 0x80);
     }
+    if (no_edge) return;
     /* The world's horizontal through the centre. */
     draw_line(layer, cx - (int32_t)(uy * R), cy + (int32_t)(ux * R), cx + (int32_t)(uy * R), cy - (int32_t)(ux * R), 4,
               fabsf(meas_angle_diff(ang, roundf(ang / 90) * 90)) < 0.3f ? acc : pri, LV_OPA_COVER);
@@ -408,7 +411,12 @@ static void level_clear(lv_event_t *e)
 static void level_layout(tool_page_t *tp)
 {
     level_t *l = tp->data;
-    lv_obj_set_flex_flow(tp->body, ui_portrait() ? LV_FLEX_FLOW_COLUMN : LV_FLEX_FLOW_ROW);
+    bool p = ui_portrait();
+    lv_obj_set_flex_flow(tp->body, p ? LV_FLEX_FLOW_COLUMN : LV_FLEX_FLOW_ROW);
+    lv_obj_set_flex_align(tp->body, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
+    /* The dial takes what the text leaves, across the whole other way. */
+    lv_obj_set_size(l->view, p ? LV_PCT(100) : LV_SIZE_CONTENT, p ? LV_SIZE_CONTENT : LV_PCT(100));
+    lv_obj_set_flex_grow(l->view, 1);
     lv_obj_invalidate(l->view);
 }
 
@@ -431,11 +439,8 @@ static void level_common(tool_page_t *tp, bool protractor)
     lv_obj_set_style_pad_all(body, T5_DP(12), 0);
     lv_obj_set_style_pad_gap(body, T5_DP(12), 0);
     l->view = canvas_obj(body, level_draw, l);
-    lv_obj_set_size(l->view, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
-    lv_obj_set_flex_grow(l->view, 1);
     lv_obj_set_style_min_width(l->view, T5_DP(200), 0);
     lv_obj_set_style_min_height(l->view, T5_DP(200), 0);
-    lv_obj_set_align(l->view, LV_ALIGN_CENTER);
     lv_obj_t *side = ui_box(body, LV_FLEX_FLOW_COLUMN);
     lv_obj_set_style_pad_row(side, T5_DP(8), 0);
     lv_obj_set_flex_align(side, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
@@ -525,9 +530,12 @@ static float snd_offset(void)
 
 static void snd_msg(snd_t *p, const char *text, bool show_allow)
 {
+    bool was = !lv_obj_is_hidden(p->msg) || !lv_obj_is_hidden(p->allow);
     ui_set_text(p->msg, text);
     lv_obj_set_hidden(p->msg, !text[0]);
     lv_obj_set_hidden(p->allow, !show_allow);
+    /* The page got shorter: don't leave it scrolled past its new end. */
+    if (was && !text[0] && !show_allow) lv_obj_scroll_to_y(lv_obj_get_parent(p->msg), 0, LV_ANIM_OFF);
 }
 
 static void snd_start(snd_t *p)
@@ -682,6 +690,7 @@ void sound_open(tool_page_t *tp)
     lv_obj_set_style_pad_bottom(p->unit, T5_DP(10), 0);
     lv_obj_t *sp = lv_obj_create(top);
     lv_obj_remove_style_all(sp);
+    lv_obj_set_size(sp, 1, 1);                       /* a new object is about 130 px tall */
     lv_obj_set_flex_grow(sp, 1);
     lv_obj_t *rb = ui_text_button(top, "Reset", false, NULL);
     lv_obj_add_event_cb(rb, snd_reset, LV_EVENT_CLICKED, p);
@@ -716,9 +725,11 @@ void sound_open(tool_page_t *tp)
     lv_chart_set_all_values(p->chart, p->ser, LV_CHART_POINT_NONE);
     md_label_create(body, "The last 12 seconds, 20 to 120 dB", MD_TYPE_CAPTION);
 
-    lv_obj_t *cal = ui_box(body, LV_FLEX_FLOW_ROW);
+    lv_obj_t *cal = ui_box(body, LV_FLEX_FLOW_ROW_WRAP);
+    lv_obj_set_width(cal, LV_PCT(100));
     lv_obj_set_flex_align(cal, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
     lv_obj_set_style_pad_column(cal, T5_DP(8), 0);
+    lv_obj_set_style_pad_row(cal, T5_DP(8), 0);
     p->off_l = md_label_create(cal, "", MD_TYPE_BODY2);
     static const struct { const char *t; int step; } b[] = { { MINUS "5", -5 }, { MINUS "1", -1 }, { "+1", 1 },
                                                              { "+5", 5 } };

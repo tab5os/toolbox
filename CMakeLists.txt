@@ -24,7 +24,7 @@ t5_app(toolbox
         tools_conv.c tools_num.c tools_elec.c tools_time.c tools_colour.c tools_measure.c
         engine/fmt.c engine/units.c engine/numtools.c engine/elec.c engine/datecalc.c engine/colour.c
         engine/measure.c
-        fonts/tb_sym_28.c fonts/tb_sym_32.c fonts/tb_sym_48.c fonts/tb_sym_68.c
+        fonts/tb_sym_24.c fonts/tb_sym_28.c fonts/tb_sym_32.c fonts/tb_sym_48.c fonts/tb_sym_68.c
     MANIFEST manifest.toml
     ICON icon.png)
 target_compile_options(toolbox.elf PRIVATE -Wall -Wextra -Wno-unused-parameter -Wno-format-truncation -Werror)
