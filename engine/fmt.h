@@ -23,7 +23,7 @@ void fmt_clock(long long centis, char *out, size_t n);
 /* ---- the number being typed ---------------------------------------------
  * A short string of digits with an optional sign and point, edited by the
  * keypad. Hex digits are allowed when hex is set. */
-#define ENTRY_MAX 24
+#define ENTRY_MAX 66
 
 typedef enum {
     ENTRY_DIGIT,       /* arg: '0'..'9', 'A'..'F' */

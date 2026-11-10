@@ -114,7 +114,7 @@ static void test_entry(void)
     CHECK(!entry_key(&e, ENTRY_POINT, 0));
     /* The default limit stops at ENTRY_MAX - 1 digits. */
     entry_init(&e, true, true, true);
-    for (int i = 0; i < 40; i++) entry_key(&e, ENTRY_DIGIT, 'F');
+    for (int i = 0; i < 100; i++) entry_key(&e, ENTRY_DIGIT, 'F');
     CHECK(strlen(e.text) == ENTRY_MAX - 1);
     entry_key(&e, ENTRY_SIGN, 0);
     CHECK(strlen(e.text) == ENTRY_MAX);

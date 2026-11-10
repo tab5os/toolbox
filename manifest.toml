@@ -1,13 +1,14 @@
-# Change id to your own reverse domain name before you publish: it is how the
-# OS tells apps apart, and an update must keep the same id.
-id = "com.example.hello"
-name = "Hello"
+id = "com.t5.example.toolbox"
+name = "Toolbox"
 version = "1.0.0"     # a release tag must match: v1.0.0
 api = 1
 runtime = "native"
 entry = "app.elf"
-# icon = "icon.png"   # a 112 x 112 px PNG; also add ICON icon.png to t5_app() in CMakeLists.txt
+icon = "icon.png"
 orientation = "any"
-description = "A starting point for a Tab5 OS app"
+description = "Many small tools: unit converters, number and money helpers, electronics, dates and timers, colour, and a ruler, level, protractor and sound meter"
+license = "MIT-0"
 
 [permissions]
+# The sound level meter. Asked for when you open it; everything else works without it.
+mic = true
